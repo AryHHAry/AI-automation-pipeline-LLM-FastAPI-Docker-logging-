@@ -19,3 +19,28 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+
+### Critical Security & Reliability Enhancements
+1. **Secrets Management**:
+   - Never bake secrets in Docker images
+   - Use Docker secrets/K8s secrets/vault sidecars
+   - `.env` files explicitly blocked in `.dockerignore`
+
+2. **Production Hardening**:
+   - Non-root user execution in Docker
+   - Dependency vulnerability scanning in CI
+   - Resource limits (memory/CPU) in `docker-compose.yml`
+
+3. **LLM-Specific Protections:
+   - Input sanitization for prompt injection
+   - Output validation filters
+   - Fallback mechanisms during LLM outages
+   - Cost controls via token limits
+
+4. **Observability Triad**:
+   ```mermaid
+   graph LR
+   A[FastAPI] -->|Structured Logs| B(Grafana Loki)
+   A -->|Metrics| C(Prometheus)
+   A -->|Traces| D(Jaeger)
+   B & C & D --> E[Grafana Dashboard]
