@@ -1,0 +1,23 @@
+# Stage 1: Builder
+FROM python:3.11-slim-bookworm AS builder
+
+WORKDIR /app
+COPY requirements/ /app/requirements/
+RUN pip install --user -r requirements/prod.txt
+
+# Stage 2: Runtime
+FROM python:3.11-slim-bookworm
+
+WORKDIR /app
+COPY --from=builder /root/.local /root/.local
+COPY ./app /app/app
+COPY ./scripts/entrypoint.sh /app/scripts/
+
+ENV PATH=/root/.local/bin:$PATH \
+    PYTHONUNBUFFERED=1 \
+    LOG_LEVEL=INFO \
+    MAX_WORKERS=4
+
+EXPOSE 8000
+ENTRYPOINT ["/app/scripts/entrypoint.sh"]
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--workers", "$MAX_WORKERS"]
